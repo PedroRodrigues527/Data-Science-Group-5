@@ -27,6 +27,7 @@ apples['Sweetness_Acidity_Juiceness'] = (apples['Sweetness'] + apples['Acidity']
 apples['Overall_Texture'] = (apples['Sweetness'] + apples['Crunchiness'] + apples['Juiciness'] + apples['Ripeness'])/4
 apples['JS_SAJ'] = apples['Juiciness_Sweetness'] + apples['Sweetness_Acidity_Juiceness']
 apples['Crunchiness_Weight'] = apples['Crunchiness'] + apples['Weight']
+apples['SSJ-R Combo'] = apples['Size'] + apples['Sweetness'] + apples['Juiciness'] - apples['Ripeness']
 
 # Pairplot for overall distribution before making quality the last column
 sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
