@@ -13,14 +13,11 @@ def main():
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
     # Load the apples dataset
-    apples = pd.read_csv('apple_quality_no_id.csv')
+    apples = pd.read_csv('apple_quality_labels.csv')
 
     # Remove leading and trailing whitespace from column names
     apples.columns = apples.columns.str.strip()
 
-    # Convert 'Quality' column to binary
-    apples['Quality'] = apples['Quality'].map({'Good': 1, 'Bad': 0})
-    
     # Create new features
     creating_features(apples)
 
@@ -104,9 +101,13 @@ def plot_histogram(normalized_df):
     :param normalized_df: DataFrame
     :return: None
     """
-    plt.figure(figsize=(15, 8))
+    num_features = len(normalized_df.columns[:-1])  # Exclude the 'Quality' column
+    num_rows = (num_features + 3) // 4
+    num_cols = min(num_features, 4)
+
+    plt.figure(figsize=(5 * num_cols, 4 * num_rows))
     for i, column in enumerate(normalized_df.columns[:-1], start=1):
-        plt.subplot(2, 4, i)  # Adjust the subplot grid as needed
+        plt.subplot(num_rows, num_cols, i)
         sns.histplot(normalized_df[column], kde=True)
         plt.title(f'Histogram of {column}')
     plt.tight_layout()
