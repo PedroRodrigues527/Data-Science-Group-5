@@ -3,7 +3,10 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
+
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
 
 def main():
     # Filter FutureWarnings
@@ -15,9 +18,11 @@ def main():
     # Remove leading and trailing whitespace from column names
     apples.columns = apples.columns.str.strip()
 
+    # Convert 'Quality' column to binary
+    apples['Quality'] = apples['Quality'].map({'Good': 1, 'Bad': 0})
+    
     # Create new features
     creating_features(apples)
-
 
     # Pairplot for overall distribution before making quality the last column
     sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
@@ -50,6 +55,13 @@ def main():
     # Correlation matrix
     plot_correlation_matrix(normalized_df)
 
+    # Apply PCA
+    pca_result, pca_model = apply_pca(normalized_df, n_components=2)
+
+    # Plot PCA
+    plot_pca(pca_result, normalized_df)
+
+
 def standardize_data(data):
     """
     Standardize the data
@@ -58,6 +70,7 @@ def standardize_data(data):
     """
     scaler = StandardScaler()
     return scaler.fit_transform(data.iloc[:, :-1])  # Exclude the 'Quality' column
+
 
 def normalize_data(std_data):
     """
@@ -68,6 +81,7 @@ def normalize_data(std_data):
     scaler = MinMaxScaler()
     return scaler.fit_transform(std_data)
 
+
 def creating_features(data):
     data['Density'] = data['Weight'] / data['Size']
     data['SA Combo'] = data['Acidity'] + data['Sweetness']
@@ -75,13 +89,14 @@ def creating_features(data):
     data['Size_Weight'] = data['Size'] + data['Weight']
     data['Size_Juiciness'] = data['Size'] + data['Juiciness']
     data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
-    data['Juiciness_Ripeness'] = data['Juiciness']**2 / data['Ripeness']**2
+    data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
     data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
-    data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness'])/3
-    data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness'])/4
+    data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
+    data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
     data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
     data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
     data['SSJ-R Combo'] = data['Size'] + data['Sweetness'] + data['Juiciness'] - data['Ripeness']
+
 
 def plot_histogram(normalized_df):
     """
@@ -97,11 +112,32 @@ def plot_histogram(normalized_df):
     plt.tight_layout()
     plt.show()
 
+
 def plot_correlation_matrix(normalized_df):
     plt.figure(figsize=(10, 8))
     sns.heatmap(normalized_df.iloc[:, :-1].corr(), annot=False, cmap='coolwarm', fmt=".2f", linewidths=.5, square=True)
     plt.title('Correlation Matrix')
     plt.show()
+
+
+def apply_pca(dataset, n_components=None):
+    # Apply PCA
+    pca_model = PCA(n_components=n_components)
+    pca_result = pca_model.fit_transform(dataset)
+
+    return pca_result, pca_model
+
+
+def plot_pca(pca_result, dataset):
+    # Plot the PCA
+    plt.figure(figsize=(12, 8))
+    plt.scatter(pca_result[:, 0], pca_result[:, 1], c=dataset['Quality'], s=50, alpha=0.5)
+    plt.colorbar()
+    plt.xlabel('First Principal Component')
+    plt.ylabel('Second Principal Component')
+    plt.title('PCA')
+    plt.show()
+
 
 if __name__ == '__main__':
     main()
