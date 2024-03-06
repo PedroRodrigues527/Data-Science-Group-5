@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
+import umap
 
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -58,6 +59,12 @@ def main():
     # Plot PCA
     plot_pca(pca_result, normalized_df)
 
+    # Apply UMAP
+    umap_result = apply_umap(normalized_data)
+
+    # Plot UMAP
+    plot_umap(umap_result, apples['Quality'])
+
 
 def standardize_data(data):
     """
@@ -85,13 +92,13 @@ def creating_features(data):
     data['Texture'] = data['Crunchiness'] + data['Juiciness']
     data['Size_Weight'] = data['Size'] + data['Weight']
     data['Size_Juiciness'] = data['Size'] + data['Juiciness']
-    data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
-    data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
-    data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
-    data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
-    data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
-    data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
-    data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
+    #data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
+    #data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
+    #data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
+    #data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
+    #data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
+    #data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
+    #data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
     data['SSJ-R Combo'] = data['Size'] + data['Sweetness'] + data['Juiciness'] - data['Ripeness']
 
 
@@ -137,6 +144,24 @@ def plot_pca(pca_result, dataset):
     plt.xlabel('First Principal Component')
     plt.ylabel('Second Principal Component')
     plt.title('PCA')
+    plt.show()
+
+
+def apply_umap(data):
+    # Apply UMAP
+    umap_result = umap.UMAP().fit_transform(data)
+
+    return umap_result
+
+
+def plot_umap(umap_result, quality_labels):
+    # Plot the UMAP
+    plt.figure(figsize=(10, 8))
+    sns.scatterplot(x=umap_result[:, 0], y=umap_result[:, 1], hue=quality_labels, palette='viridis', s=50, alpha=0.5)
+    plt.xlabel('UMAP Component 1')
+    plt.ylabel('UMAP Component 2')
+    plt.title('UMAP Projection')
+    plt.legend(title='Quality')
     plt.show()
 
 
