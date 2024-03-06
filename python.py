@@ -10,7 +10,7 @@ def main():
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
     # Load the apples dataset
-    apples = pd.read_csv('apple_quality.csv')
+    apples = pd.read_csv('apple_quality_no_id.csv')
 
     # Remove leading and trailing whitespace from column names
     apples.columns = apples.columns.str.strip()
@@ -103,5 +103,5 @@ def plot_correlation_matrix(normalized_df):
     plt.title('Correlation Matrix')
     plt.show()
 
-def __init__():
+if __name__ == '__main__':
     main()
