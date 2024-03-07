@@ -4,12 +4,9 @@ import matplotlib.pyplot as plt
 import warnings
 import umap
 import matplotlib.pyplot as plt
-import statsmodels.api as sm
-import statsmodels.stats.api as sms
-from scipy.stats import ttest_ind, f_oneway, ttest_rel, wilcoxon, kruskal, friedmanchisquare, probplot, shapiro
-from statsmodels.formula.api import ols
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from Hypothesis import HypothesisTester
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
@@ -66,6 +63,16 @@ def main():
 
     # Plot UMAP
     plot_umap(umap_result, apples['Quality'])
+
+    tester = HypothesisTester()
+
+    sample_one = normalized_df[normalized_df['Quality'] == 0].iloc[:, :-1]
+    sample_two = normalized_df[normalized_df['Quality'] == 1].iloc[:, :-1]
+
+    t_stat, p_value = tester.unpaired_t_test(sample_one, sample_two)
+    print("\nabcate:")
+    print("t-statistic:", t_stat)
+    print("p-value:", p_value)
 
 
 def standardize_data(data):
