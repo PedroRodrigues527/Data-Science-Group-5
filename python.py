@@ -60,7 +60,7 @@ def main():
     plot_pca(pca_result, normalized_df)
 
     # Apply UMAP
-    umap_result = apply_umap(normalized_data)
+    umap_result = apply_umap(standardized_data)
 
     # Plot UMAP
     plot_umap(umap_result, apples['Quality'])
@@ -132,7 +132,6 @@ def apply_pca(dataset, n_components=None):
     # Apply PCA
     pca_model = PCA(n_components=n_components)
     pca_result = pca_model.fit_transform(dataset)
-
     return pca_result, pca_model
 
 
@@ -147,10 +146,10 @@ def plot_pca(pca_result, dataset):
     plt.show()
 
 
-def apply_umap(data):
+def apply_umap(data_standardized):
     # Apply UMAP
-    umap_result = umap.UMAP().fit_transform(data)
-
+    reducer = umap.UMAP()
+    umap_result = reducer.fit_transform(data_standardized)
     return umap_result
 
 
