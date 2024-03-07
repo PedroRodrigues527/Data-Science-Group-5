@@ -1,15 +1,22 @@
+from pprint import pprint
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
 import umap
 import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import statsmodels.stats.api as sms
+from scipy.stats import ttest_ind, f_oneway, ttest_rel, wilcoxon, kruskal, friedmanchisquare, probplot, shapiro
+from statsmodels.formula.api import ols
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from Hypothesis import HypothesisTester
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import pandas as pd
+
 
 def main():
     # Load the apples dataset
@@ -65,7 +72,7 @@ def main():
     plot_umap(umap_result, apples['Quality'])
 
     # T-testing
-    t_testing(normalized_df)
+    unpaired_t_testing(normalized_df)
 
 
 def standardize_data(data):
@@ -94,13 +101,13 @@ def creating_features(data):
     data['Texture'] = data['Crunchiness'] + data['Juiciness']
     data['Size_Weight'] = data['Size'] + data['Weight']
     data['Size_Juiciness'] = data['Size'] + data['Juiciness']
-    #data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
-    #data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
-    #data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
-    #data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
-    #data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
-    #data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
-    #data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
+    # data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
+    # data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
+    # data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
+    # data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
+    # data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
+    # data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
+    # data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
     data['SSJ-R Combo'] = data['Size'] + data['Sweetness'] + data['Juiciness'] - data['Ripeness']
 
 
@@ -165,7 +172,8 @@ def plot_umap(umap_result, quality_labels):
     plt.legend(title='Quality')
     plt.show()
 
-def t_testing(normalized_df):
+
+def unpaired_t_testing(normalized_df):
     tester = HypothesisTester()
 
     sample_one = normalized_df[normalized_df['Quality'] == 0].iloc[:, :-1]
@@ -176,6 +184,6 @@ def t_testing(normalized_df):
     print("t-statistic:", t_stat)
     print("p-value:", p_value)
 
+
 if __name__ == '__main__':
     main()
-
