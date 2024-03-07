@@ -1,18 +1,20 @@
 import numpy as np
-import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
 import umap
-
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+import statsmodels.stats.api as sms
+from scipy.stats import ttest_ind, f_oneway, ttest_rel, wilcoxon, kruskal, friedmanchisquare, probplot, shapiro
+from statsmodels.formula.api import ols
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
+warnings.simplefilter(action='ignore', category=FutureWarning)
+import pandas as pd
 
 def main():
-    # Filter FutureWarnings
-    warnings.simplefilter(action='ignore', category=FutureWarning)
-
     # Load the apples dataset
     apples = pd.read_csv('apple_quality_labels.csv')
 
@@ -167,3 +169,4 @@ def plot_umap(umap_result, quality_labels):
 
 if __name__ == '__main__':
     main()
+
