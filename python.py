@@ -64,15 +64,8 @@ def main():
     # Plot UMAP
     plot_umap(umap_result, apples['Quality'])
 
-    tester = HypothesisTester()
-
-    sample_one = normalized_df[normalized_df['Quality'] == 0].iloc[:, :-1]
-    sample_two = normalized_df[normalized_df['Quality'] == 1].iloc[:, :-1]
-
-    t_stat, p_value = tester.unpaired_t_test(sample_one, sample_two)
-    print("\nabcate:")
-    print("t-statistic:", t_stat)
-    print("p-value:", p_value)
+    # T-testing
+    t_testing(normalized_df)
 
 
 def standardize_data(data):
@@ -172,6 +165,16 @@ def plot_umap(umap_result, quality_labels):
     plt.legend(title='Quality')
     plt.show()
 
+def t_testing(normalized_df):
+    tester = HypothesisTester()
+
+    sample_one = normalized_df[normalized_df['Quality'] == 0].iloc[:, :-1]
+    sample_two = normalized_df[normalized_df['Quality'] == 1].iloc[:, :-1]
+
+    t_stat, p_value = tester.unpaired_t_test(sample_one, sample_two)
+    print("\nT-testing:")
+    print("t-statistic:", t_stat)
+    print("p-value:", p_value)
 
 if __name__ == '__main__':
     main()
