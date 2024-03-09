@@ -8,7 +8,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+#warnings.filterwarnings("ignore", category=RuntimeWarning)
 import pandas as pd
 
 
@@ -65,8 +65,9 @@ def main():
     plot_umap(umap_result, apples['Quality'])
 
     # T-testing
-    group1 = normalized_df[normalized_df['Quality'] == 1]
-    group2 = normalized_df[normalized_df['Quality'] == 0]
+    df_no_quality = normalized_df.drop(columns=['Quality'])
+    group1 = df_no_quality[df_no_quality['Quality'] == 1]
+    group2 = df_no_quality[df_no_quality['Quality'] == 0]
     min_length = min(len(group1), len(group2))
     group1 = group1[:min_length]
     group2 = group2[:min_length]
@@ -74,7 +75,7 @@ def main():
     print(f'T-Statistic: {t_statistic}, P-Value: {p_value}')
 
     # Shapiro-Wilk Test
-    shapiro_wilk_test(normalized_df)
+    shapiro_wilk_test(df_no_quality)
 
     # Create new features
     creating_features(apples)
