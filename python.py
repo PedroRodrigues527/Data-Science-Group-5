@@ -1,16 +1,12 @@
 import warnings
-import matplotlib.pyplot as plt
-import seaborn as sns
-import umap.umap_ as umap
-from scipy.stats import shapiro, ttest_rel
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 import pandas as pd
-from plots import plot_overall_distribution, plot_histogram, plot_correlation_matrix, plot_pca, plot_umap
-from testing import paired_t_testing_apples, shapiro_wilk_test
+from plots import plot_overall_distribution, plot_histogram, plot_correlation_matrix
+from dataPreprocessing import preprocess_data
+from dimensionReduction import dimensionalityReduction
+from Hypothesis import hypothesesTesting
 
 def main():
     # Load the apples dataset
@@ -28,10 +24,7 @@ def main():
     apples = apples[cols + ['Quality']]
 
     # Standardize the data
-    standardized_data = standardize_data(apples)
-
-    # Normalize the data
-    normalized_data = normalize_data(standardized_data)
+    standardized_data, normalized_data = preprocess_data(apples)
 
     # Convert the normalized data back to a DataFrame
     normalized_df = pd.DataFrame(normalized_data, columns=apples.columns[:-1])
@@ -48,52 +41,16 @@ def main():
     # Correlation matrix
     plot_correlation_matrix(normalized_df)
 
-    # Apply PCA
-    pca_result, pca_model = apply_pca(normalized_df, n_components=2)
-
-    # Plot PCA
-    plot_pca(pca_result, normalized_df)
-
-    # Apply UMAP
-    umap_result = apply_umap(standardized_data)
-
-    # Plot UMAP
-    plot_umap(umap_result, apples['Quality'])
+    dimensionalityReduction(normalized_df)
 
     df_no_quality = normalized_df.drop(columns=['Quality'])
 
-    # T-testing
-    paired_t_testing_apples(df_no_quality)
+    hypothesesTesting(df_no_quality)
 
-    # Shapiro-Wilk Test
-    shapiro_wilk_test(df_no_quality)
-
-    # Create new features
-    creating_features(apples)
+    creating_features(normalized_df)
 
     # Plot new features
     plot_overall_distribution(apples, 'Quality', msg='Plot with new features')
-
-
-def standardize_data(data):
-    """
-    Standardize the data
-    :param data: DataFrame
-    :return: DataFrame
-    """
-    scaler = StandardScaler()
-    return scaler.fit_transform(data.iloc[:, :-1])  # Exclude the 'Quality' column
-
-
-def normalize_data(std_data):
-    """
-    Normalize the data
-    :param data: DataFrame
-    :return: DataFrame
-    """
-    scaler = MinMaxScaler()
-    return scaler.fit_transform(std_data)
-
 
 def creating_features(data):
     data['Density'] = data['Weight'] / data['Size']
@@ -109,21 +66,6 @@ def creating_features(data):
     data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
     data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
     data['SSJ-R Combo'] = data['Size'] + data['Sweetness'] + data['Juiciness'] - data['Ripeness']
-
-
-def apply_pca(dataset, n_components=None):
-    # Apply PCA
-    pca_model = PCA(n_components=n_components)
-    pca_result = pca_model.fit_transform(dataset)
-    return pca_result, pca_model
-
-
-def apply_umap(data_standardized):
-    # Apply UMAP
-    reducer = umap.UMAP()
-    umap_result = reducer.fit_transform(data_standardized)
-    return umap_result
-
 
 if __name__ == '__main__':
     main()

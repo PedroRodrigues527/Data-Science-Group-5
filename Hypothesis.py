@@ -1,4 +1,5 @@
 from scipy.stats import ttest_rel
+from testing import paired_t_testing_apples, shapiro_wilk_test
 class HypothesisTester:
     """
     The t-test assumes that the data is normally distributed and that the variances are equal between groups (for
@@ -22,4 +23,10 @@ class HypothesisTester:
         t_statistic, p_value = ttest_rel(group1, group2)
         return t_statistic, p_value
 
+def hypothesesTesting(df_no_quality):
+    # T-testing
+    paired_t_testing_apples(df_no_quality)
+
+    # Shapiro-Wilk Test
+    shapiro_wilk_test(df_no_quality)
     
