@@ -74,6 +74,9 @@ def main():
     # T-testing
     unpaired_t_testing(normalized_df)
 
+    # Shapiro-Wilk Test
+    shapiro_wilk_test(normalized_df)
+
 
 def standardize_data(data):
     """
@@ -99,8 +102,8 @@ def creating_features(data):
     data['Density'] = data['Weight'] / data['Size']
     data['SA Combo'] = data['Acidity'] + data['Sweetness']
     data['Texture'] = data['Crunchiness'] + data['Juiciness']
-    data['Size_Weight'] = data['Size'] + data['Weight']
-    data['Size_Juiciness'] = data['Size'] + data['Juiciness']
+    # data['Size_Weight'] = data['Size'] + data['Weight']
+    # data['Size_Juiciness'] = data['Size'] + data['Juiciness']
     # data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
     # data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
     # data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
@@ -184,6 +187,17 @@ def unpaired_t_testing(normalized_df):
     print("t-statistic:", t_stat)
     print("p-value:", p_value)
 
+def shapiro_wilk_test(data):
+    # Shapiro-Wilk Test
+    for column in data.columns:
+        stat, p = shapiro(data[column])
+        print('Statistics=%.3f, p=%.3f' % (stat, p))
+        # interpret
+        alpha = 0.05
+        if p > alpha:
+            print(column, 'Sample looks Gaussian (fail to reject H0)')
+        else:
+            print(column, 'Sample does not look Gaussian (reject H0)')
 
 if __name__ == '__main__':
     main()
