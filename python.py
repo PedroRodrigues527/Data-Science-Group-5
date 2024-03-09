@@ -1,17 +1,12 @@
-from pprint import pprint
-
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
 import warnings
-import umap
+
 import matplotlib.pyplot as plt
-import statsmodels.api as sm
-import statsmodels.stats.api as sms
-from scipy.stats import ttest_ind, f_oneway, ttest_rel, wilcoxon, kruskal, friedmanchisquare, probplot, shapiro
-from statsmodels.formula.api import ols
+import seaborn as sns
+import umap
+from scipy.stats import shapiro
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
 from Hypothesis import HypothesisTester
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -25,11 +20,9 @@ def main():
     # Remove leading and trailing whitespace from column names
     apples.columns = apples.columns.str.strip()
 
-    # Create new features
-    creating_features(apples)
-
     # Pairplot for overall distribution before making quality the last column
     sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
+    plt.title('Pairplot standard data')
     plt.show()
 
     # Making 'Quality' the last column
@@ -51,6 +44,7 @@ def main():
 
     # Pairplot for overall distribution after standardization and normalization
     sns.pairplot(normalized_df, hue='Quality', plot_kws={'s': 5})
+    plt.title('Pairplot normalized data')
     plt.show()
 
     # Plot histogram for each feature
@@ -77,6 +71,14 @@ def main():
     # Shapiro-Wilk Test
     shapiro_wilk_test(normalized_df)
 
+    # Create new features
+    creating_features(apples)
+
+    # Plot new features
+    sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
+    plt.title('Plot with new features')
+    plt.show()
+
 
 def standardize_data(data):
     """
@@ -102,15 +104,15 @@ def creating_features(data):
     data['Density'] = data['Weight'] / data['Size']
     data['SA Combo'] = data['Acidity'] + data['Sweetness']
     data['Texture'] = data['Crunchiness'] + data['Juiciness']
-    # data['Size_Weight'] = data['Size'] + data['Weight']
-    # data['Size_Juiciness'] = data['Size'] + data['Juiciness']
-    # data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
-    # data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
-    # data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
-    # data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
-    # data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
-    # data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
-    # data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
+    data['Size_Weight'] = data['Size'] + data['Weight']
+    data['Size_Juiciness'] = data['Size'] + data['Juiciness']
+    data['Juiciness_Sweetness'] = data['Juiciness'] + data['Sweetness']
+    data['Juiciness_Ripeness'] = data['Juiciness'] ** 2 / data['Ripeness'] ** 2
+    data['Size_Weight_Crunchiness'] = data['Size'] * data['Weight'] * data['Crunchiness']
+    data['Sweetness_Acidity_Juiceness'] = (data['Sweetness'] + data['Acidity'] + data['Juiciness']) / 3
+    data['Overall_Texture'] = (data['Sweetness'] + data['Crunchiness'] + data['Juiciness'] + data['Ripeness']) / 4
+    data['JS_SAJ'] = data['Juiciness_Sweetness'] + data['Sweetness_Acidity_Juiceness']
+    data['Crunchiness_Weight'] = data['Crunchiness'] + data['Weight']
     data['SSJ-R Combo'] = data['Size'] + data['Sweetness'] + data['Juiciness'] - data['Ripeness']
 
 
@@ -186,11 +188,13 @@ def unpaired_t_testing(normalized_df):
     print("\nT-testing:")
     print("t-statistic:", t_stat)
     print("p-value:", p_value)
+    print("\n")
 
 def shapiro_wilk_test(data):
     # Shapiro-Wilk Test
     for column in data.columns:
         stat, p = shapiro(data[column])
+        print("\n")
         print('Statistics=%.3f, p=%.3f' % (stat, p))
         # interpret
         alpha = 0.05
@@ -198,6 +202,7 @@ def shapiro_wilk_test(data):
             print(column, 'Sample looks Gaussian (fail to reject H0)')
         else:
             print(column, 'Sample does not look Gaussian (reject H0)')
+
 
 if __name__ == '__main__':
     main()
