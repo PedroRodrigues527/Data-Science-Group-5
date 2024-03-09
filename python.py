@@ -3,13 +3,12 @@ import warnings
 import matplotlib.pyplot as plt
 import seaborn as sns
 import umap
-from scipy.stats import shapiro
+from scipy.stats import shapiro, ttest_rel
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-from Hypothesis import HypothesisTester
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 import pandas as pd
 
 
@@ -66,7 +65,13 @@ def main():
     plot_umap(umap_result, apples['Quality'])
 
     # T-testing
-    unpaired_t_testing(normalized_df)
+    group1 = normalized_df[normalized_df['Quality'] == 1]
+    group2 = normalized_df[normalized_df['Quality'] == 0]
+    min_length = min(len(group1), len(group2))
+    group1 = group1[:min_length]
+    group2 = group2[:min_length]
+    t_statistic, p_value = paired_t_test(group1, group2)
+    print(f'T-Statistic: {t_statistic}, P-Value: {p_value}')
 
     # Shapiro-Wilk Test
     shapiro_wilk_test(normalized_df)
@@ -178,17 +183,11 @@ def plot_umap(umap_result, quality_labels):
     plt.show()
 
 
-def unpaired_t_testing(normalized_df):
-    tester = HypothesisTester()
+def paired_t_test(group1, group2):
+    # Paired T-Test
+    t_statistic, p_value = ttest_rel(group1, group2)
+    return t_statistic, p_value
 
-    sample_one = normalized_df[normalized_df['Quality'] == 0].iloc[:, :-1]
-    sample_two = normalized_df[normalized_df['Quality'] == 1].iloc[:, :-1]
-
-    t_stat, p_value = tester.unpaired_t_test(sample_one, sample_two)
-    print("\nT-testing:")
-    print("t-statistic:", t_stat)
-    print("p-value:", p_value)
-    print("\n")
 
 def shapiro_wilk_test(data):
     # Shapiro-Wilk Test
