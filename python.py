@@ -9,7 +9,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 import pandas as pd
-from plots import plot_histogram, plot_correlation_matrix, plot_pca, plot_umap
+from plots import plot_overall_distribution, plot_histogram, plot_correlation_matrix, plot_pca, plot_umap
+from testing import paired_t_testing_apples, shapiro_wilk_test
 
 def main():
     # Load the apples dataset
@@ -19,9 +20,7 @@ def main():
     apples.columns = apples.columns.str.strip()
 
     # Pairplot for overall distribution before making quality the last column
-    sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
-    plt.title('Pairplot standard data')
-    plt.show()
+    plot_overall_distribution(apples, 'Quality')
 
     # Making 'Quality' the last column
     cols = list(apples.columns.values)
@@ -41,9 +40,7 @@ def main():
     normalized_df['Quality'] = apples['Quality']
 
     # Pairplot for overall distribution after standardization and normalization
-    sns.pairplot(normalized_df, hue='Quality', plot_kws={'s': 5})
-    plt.title('Pairplot normalized data')
-    plt.show()
+    plot_overall_distribution(normalized_df, 'Quality', msg='Pairplot normalized data')
 
     # Plot histogram for each feature
     plot_histogram(normalized_df)
@@ -63,15 +60,10 @@ def main():
     # Plot UMAP
     plot_umap(umap_result, apples['Quality'])
 
-    # T-testing
     df_no_quality = normalized_df.drop(columns=['Quality'])
-    group1 = df_no_quality[df_no_quality['Quality'] == 1]
-    group2 = df_no_quality[df_no_quality['Quality'] == 0]
-    min_length = min(len(group1), len(group2))
-    group1 = group1[:min_length]
-    group2 = group2[:min_length]
-    t_statistic, p_value = paired_t_test(group1, group2)
-    print(f'T-Statistic: {t_statistic}, P-Value: {p_value}')
+
+    # T-testing
+    paired_t_testing_apples(df_no_quality)
 
     # Shapiro-Wilk Test
     shapiro_wilk_test(df_no_quality)
@@ -80,9 +72,7 @@ def main():
     creating_features(apples)
 
     # Plot new features
-    sns.pairplot(apples, hue='Quality', plot_kws={'s': 5})
-    plt.title('Plot with new features')
-    plt.show()
+    plot_overall_distribution(apples, 'Quality', msg='Plot with new features')
 
 
 def standardize_data(data):
@@ -133,24 +123,6 @@ def apply_umap(data_standardized):
     reducer = umap.UMAP()
     umap_result = reducer.fit_transform(data_standardized)
     return umap_result
-
-def paired_t_test(group1, group2):
-    # Paired T-Test
-    t_statistic, p_value = ttest_rel(group1, group2)
-    return t_statistic, p_value
-
-def shapiro_wilk_test(data):
-    # Shapiro-Wilk Test
-    for column in data.columns:
-        stat, p = shapiro(data[column])
-        print("\n")
-        print('Statistics=%.3f, p=%.3f' % (stat, p))
-        # interpret
-        alpha = 0.05
-        if p > alpha:
-            print(column, 'Sample looks Gaussian (fail to reject H0)')
-        else:
-            print(column, 'Sample does not look Gaussian (reject H0)')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,16 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+def plot_overall_distribution(data_set, column, msg='Pairplot standard data'):
+    """
+    Pairplot for overall distribution
+    :param apples: DataFrame
+    :return: None
+    """
+    sns.pairplot(data_set, hue=column, plot_kws={'s': 5})
+    plt.title(msg)
+    plt.show()
+
 def plot_histogram(normalized_df):
     """
     Plot histogram for each feature
