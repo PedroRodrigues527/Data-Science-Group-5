@@ -2,13 +2,13 @@ import warnings
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import umap
+import umap.umap_ as umap
 from scipy.stats import shapiro, ttest_rel
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
-#warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 import pandas as pd
 
 
