@@ -2,18 +2,18 @@ import umap.umap_ as umap
 from sklearn.decomposition import PCA
 from plots import plot_pca, plot_umap
 
-def dimensionalityReduction(apples):
+def dimensionalityReduction(normalized_data, standardized_data):
     # Apply PCA
-    pca_result, pca_model = apply_pca(apples, n_components=2)
+    pca_result, pca_model = apply_pca(normalized_data, n_components=2)
 
     # Plot PCA
-    plot_pca(pca_result, apples)
+    plot_pca(pca_result, normalized_data)
 
     # Apply UMAP
-    umap_result = apply_umap(apples)
+    umap_result = apply_umap(standardized_data)
 
     # Plot UMAP
-    plot_umap(umap_result, apples['Quality'])
+    plot_umap(umap_result, normalized_data['Quality'])
 
 def apply_pca(dataset, n_components=None):
     # Apply PCA

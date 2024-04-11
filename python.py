@@ -41,7 +41,7 @@ def main():
     # Correlation matrix
     plot_correlation_matrix(normalized_df)
 
-    dimensionalityReduction(normalized_df)
+    dimensionalityReduction(normalized_df, standardized_data)
 
     df_no_quality = normalized_df.drop(columns=['Quality'])
 
