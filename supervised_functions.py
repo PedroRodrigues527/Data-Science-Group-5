@@ -1,6 +1,14 @@
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from joblib import dump
+
 def corr_quality(df):
     # Calculate correlation matrix
-    correlation_matrix = apples.corr()
+    correlation_matrix = df.corr()
 
     # Assuming 'Quality' is the target variable
     target_correlation = correlation_matrix['Quality'].drop('Quality')  # Remove correlation with itself
@@ -15,8 +23,8 @@ def split_train_test(df):
     best_features = ['Ripeness', 'Juiciness', 'Sweetness', 'Size', 'Crunchiness', 'Acidity', 'Weight']
     worst_festures = ['Crunchiness', 'Acidity', 'Weight']
 
-    X = apples[best_features]
-    y = apples['Quality']
+    X = df[best_features]
+    y = df['Quality']
 
     return train_test_split(X, y, test_size=0.20, random_state=42)
 
