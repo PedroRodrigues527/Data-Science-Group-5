@@ -4,6 +4,8 @@ Requirements: sudo apt-get install graphviz
 @author: Pedro Rodrigues
 """
 
+# TODO: Hyperparameter Tuning
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, confusion_matrix
