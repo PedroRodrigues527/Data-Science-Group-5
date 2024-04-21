@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import confusion_matrix
+
 
 def plot_overall_distribution(data_set, column, msg='Pairplot standard data'):
     """
@@ -29,6 +31,14 @@ def plot_histogram(normalized_df):
     plt.tight_layout()
     plt.show()
 
+def plot_confusion_matrix_general(y_true, y_pred, classes):
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
+    plt.xlabel('Predicted labels')
+    plt.ylabel('True labels')
+    plt.title('Confusion Matrix')
+    plt.show()
 
 def plot_correlation_matrix(normalized_df):
     plt.figure(figsize=(10, 8))
