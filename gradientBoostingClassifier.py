@@ -1,6 +1,5 @@
 """
 GradientBoostingClassifier Boosting Algorithm
-Requirements: sudo apt-get install graphviz
 @author: Pedro Rodrigues
 """
 
@@ -12,9 +11,6 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 from plots import plot_confusion_matrix_general
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.tree import export_graphviz
-from IPython.display import Image
-import pydotplus
 
 def trainModel(X_train, y_train):
     rf = GradientBoostingClassifier(n_estimators=100, random_state=42)
