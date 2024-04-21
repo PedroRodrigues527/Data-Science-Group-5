@@ -1,6 +1,5 @@
 """
 GradientBoostingClassifier Boosting Algorithm
-@author: Pedro Rodrigues
 """
 
 # TODO: More metrics

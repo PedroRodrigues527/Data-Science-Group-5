@@ -1,7 +1,6 @@
 """
 Random Forest Classifier Bagging Algorithm
 Requirements: sudo apt-get install graphviz
-@author: Pedro Rodrigues
 """
 
 # TODO: Hyperparameter Tuning
