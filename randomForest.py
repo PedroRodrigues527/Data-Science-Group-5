@@ -2,16 +2,17 @@
 Random Forest Classifier Bagging Algorithm
 Requirements: sudo apt-get install graphviz
 """
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, confusion_matrix
-from plots import plot_confusion_matrix_general
-import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.tree import export_graphviz
 from IPython.display import Image
-import pydotplus
+from plots import plot_confusion_matrix_general
 from scipy.stats import randint
+import pydotplus
+import sys
 
 def trainModel(X_train, y_train, withHyperParameters=False):
     rf = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -78,4 +79,8 @@ def randomForest(hyperparameters=False):
     display_tree(model, X_train.columns, label_encoder.classes_)
 
 if __name__ == "__main__":
-    randomForest(True)
+    withHyperParameters = False
+    if(len(sys.argv) > 1 and sys.argv[1] == "--hyperparameters"):
+        print("with hyperparameters")
+        withHyperParameters = True    
+    randomForest(withHyperParameters)
