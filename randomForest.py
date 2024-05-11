@@ -5,7 +5,7 @@ Requirements: sudo apt-get install graphviz
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 from sklearn.tree import export_graphviz
 from IPython.display import Image
@@ -31,10 +31,17 @@ def predictModel(model, X_test):
     return model.predict(X_test)
 
 def evaluateModel(y_test, y_pred):
-    return accuracy_score(y_test, y_pred)
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred, average='weighted')
+    recall = recall_score(y_test, y_pred, average='weighted')
+    f1 = f1_score(y_test, y_pred, average='weighted')
+    return accuracy, precision, recall, f1
 
-def displayMetrics(y_test, y_pred, accuracy):
+def displayMetrics(y_test, y_pred, accuracy, precision, recall, f1):
     print("Accuracy: ", accuracy)
+    print("Precision: ", precision)
+    print("Recall: ", recall)
+    print("F1 Score: ", f1)
     print("\nConfusion Matrix: ",confusion_matrix(y_test, y_pred))
     plot_confusion_matrix_general(y_test, y_pred, ['1', '2'])
 
@@ -74,13 +81,12 @@ def randomForest(hyperparameters=False):
         model = best_rf
 
     y_pred = predictModel(model, X_test)
-    accuracy = evaluateModel(y_test, y_pred)
-    displayMetrics(y_test, y_pred, accuracy)
+    accuracy, precision, recall, f1 = evaluateModel(y_test, y_pred)
+    displayMetrics(y_test, y_pred, accuracy, precision, recall, f1)
     display_tree(model, X_train.columns, label_encoder.classes_)
 
 if __name__ == "__main__":
     withHyperParameters = False
     if(len(sys.argv) > 1 and sys.argv[1] == "--hyperparameters"):
-        print("with hyperparameters")
         withHyperParameters = True    
     randomForest(withHyperParameters)
