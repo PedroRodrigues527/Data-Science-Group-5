@@ -1,10 +1,16 @@
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-from joblib import dump
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from joblib import dump, load
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def corr_quality(df):
     # Calculate correlation matrix
@@ -30,11 +36,14 @@ def split_train_test(df):
 
 def train_eval_models(X_train, X_test, y_train, y_test):
     models = {
-    "XGBoost": XGBClassifier(),
-    "Random Forest": RandomForestClassifier(),
-    "SVM": SVC(),
-    "Logistic Regression": LogisticRegression(),
-    "Gradient Boosting": GradientBoostingClassifier()
+        "XGBoost": XGBClassifier(n_estimators=25, learning_rate=0.001, max_depth=10),
+        "Random Forest": RandomForestClassifier(n_estimators=50, max_depth=15, min_samples_split=5),
+        "SVM": SVC(C=15.0, kernel='rbf', gamma='scale'),
+        "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs'),
+        "Gradient Boosting": GradientBoostingClassifier(n_estimators=250, learning_rate=0.01, max_depth=5),
+        "Naive Bayes": GaussianNB(var_smoothing=1e-5),
+        "Decision Trees": DecisionTreeClassifier(criterion='gini', max_depth=5, min_samples_split=5),
+        "AdaBoost": AdaBoostClassifier(n_estimators=100, learning_rate=0.001, algorithm='SAMME.R'),
     }
     
     for name, model in models.items():
@@ -47,7 +56,14 @@ def train_eval_models(X_train, X_test, y_train, y_test):
         print(f"Classification Report for {name}:")
         print(classification_report(y_test, y_pred))
         
+        cm = confusion_matrix(y_test, y_pred)
         print(f"Confusion Matrix for {name}:")
-        print(confusion_matrix(y_test, y_pred))
-
-        dump(model, f"{name}.joblib")
+        print(cm)
+        
+        # Plotting confusion matrix with Seaborn
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=True, yticklabels=True)
+        plt.title(f'Confusion Matrix for {name}')
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.show()
