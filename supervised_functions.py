@@ -36,6 +36,7 @@ def split_train_test(df):
 
 def train_eval_models(X_train, X_test, y_train, y_test):
     models = {
+
         "XGBoost": XGBClassifier(n_estimators=25, learning_rate=0.001, max_depth=10),
         "Random Forest": RandomForestClassifier(n_estimators=50, max_depth=15, min_samples_split=5),
         "SVM": SVC(C=15.0, kernel='rbf', gamma='scale'),
@@ -57,8 +58,6 @@ def train_eval_models(X_train, X_test, y_train, y_test):
         print(classification_report(y_test, y_pred))
         
         cm = confusion_matrix(y_test, y_pred)
-        print(f"Confusion Matrix for {name}:")
-        print(cm)
         
         # Plotting confusion matrix with Seaborn
         plt.figure(figsize=(10, 7))
