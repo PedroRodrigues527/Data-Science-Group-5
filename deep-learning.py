@@ -35,17 +35,20 @@ def build_model(input_shape):
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
     return model
 
+
 def train_model(model, train_dataset, test_dataset):
-    early_stopping = tf.keras.callbacks.EarlyStopping(monitor= 'val_loss', patience=20, restore_best_weights=True)
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
     history = model.fit(train_dataset, epochs=200, validation_data=test_dataset, callbacks=[early_stopping])
     return history
+
 
 def evaluate_model(model, X_test, y_test):
     loss, accuracy = model.evaluate(X_test, y_test)
     return loss, accuracy
 
+
 def plot_history(history):
-    #Plot accuracy train vs validation
+    # Plot accuracy train vs validation
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
     plt.title('Model Accuracy')
@@ -54,7 +57,7 @@ def plot_history(history):
     plt.legend(['Train', 'Validation'], loc='upper left')
     plt.show()
 
-    #Plot loss train vs validation
+    # Plot loss train vs validation
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.title('Model Loss')
