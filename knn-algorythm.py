@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_auc_score, roc_curve
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
@@ -65,6 +65,24 @@ def main():
 
     print("Confusion Matrix:")
     print(cm)
+
+    # Compute ROC-AUC score and plot ROC curve
+    if len(np.unique(y)) == 2:  # Check if binary classification
+        y_prob = best_knn.predict_proba(X_test)[:, 1]
+        roc_auc = roc_auc_score(y_test, y_prob)
+        print(f"ROC-AUC Score: {roc_auc:.2f}")
+
+        false_positive_rate, true_positive_rate, _ = roc_curve(y_test, y_prob)
+        plt.figure()
+        plt.plot(false_positive_rate, true_positive_rate, color='darkorange', label=f'ROC curve (AUC = {roc_auc:.2f})')
+        plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('RoC Curve')
+        plt.legend(loc="lower right")
+        plt.show()
 
 
 if __name__ == "__main__":
