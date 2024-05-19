@@ -1,0 +1,71 @@
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+
+def main():
+    df = pd.read_csv('datasets/apple_quality_labels.csv')
+    X = df.drop('Quality', axis=1).values
+    y = df['Quality'].values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    # Test different values of k
+    k_values = list(range(1, 50))
+    cv_scores = []
+
+    for k in k_values:
+        knn = KNeighborsClassifier(n_neighbors=k)
+        scores = cross_val_score(knn, X_train, y_train, cv=10, scoring='accuracy')
+        cv_scores.append(scores.mean())
+
+    # Determine the best k
+    best_k = k_values[np.argmax(cv_scores)]
+    print(f"Best k: {best_k}")
+
+    # Plot the cross-validated accuracy for each k
+    plt.plot(k_values, cv_scores)
+    plt.xlabel('Number of Neighbors K')
+    plt.ylabel('Cross-Validated Accuracy')
+    plt.show()
+
+    # Train the final model with the best k
+    best_knn = KNeighborsClassifier(n_neighbors=best_k)
+    best_knn.fit(X_train, y_train)
+
+    # Predict on the test set
+    y_pred = best_knn.predict(X_test)
+
+    # Evaluate the model
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy * 100:.2f}%")
+
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred))
+
+    # Compute the confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+
+    # Plot the confusion matrix
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.show()
+
+    print("Confusion Matrix:")
+    print(cm)
+
+
+if __name__ == "__main__":
+    main()
