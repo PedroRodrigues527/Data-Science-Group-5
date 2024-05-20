@@ -1,14 +1,11 @@
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
-from joblib import dump, load
-import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -38,10 +35,8 @@ def train_eval_models(X_train, X_test, y_train, y_test):
     models = {
 
         "XGBoost": XGBClassifier(n_estimators=25, learning_rate=0.001, max_depth=10),
-        "Random Forest": RandomForestClassifier(n_estimators=50, max_depth=15, min_samples_split=5),
         "SVM": SVC(C=15.0, kernel='rbf', gamma='scale'),
         "Logistic Regression": LogisticRegression(penalty='l2', C=1.0, solver='lbfgs'),
-        "Gradient Boosting": GradientBoostingClassifier(n_estimators=250, learning_rate=0.01, max_depth=5),
         "Naive Bayes": GaussianNB(var_smoothing=1e-5),
         "Decision Trees": DecisionTreeClassifier(criterion='gini', max_depth=5, min_samples_split=5),
         "AdaBoost": AdaBoostClassifier(n_estimators=100, learning_rate=0.001, algorithm='SAMME.R'),
