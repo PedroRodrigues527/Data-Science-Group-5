@@ -25,7 +25,7 @@ This folder contains Jupyter notebooks for various stages of the data analysis a
 ## Other Files
 
 - **supervised_functions.py**: Python script containing functions for supervised learning models (helper).
-
-## Other Files
-
 - **requirements.txt**: Text file listing the required dependencies and packages for the project.
+
+### Credits
+This project was carried out as part of the Data Science course on Informatics Engineering in UMa. Developed by Pedro Rodrigues, Pedro Temtem, Vitor Marques and Duarte Magalhães
